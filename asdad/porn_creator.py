@@ -20,9 +20,9 @@ im format: np.ndarray with shape width, height, RGB
 """
 
 PREDICTOR_PATH = "./shape_predictor_68_face_landmarks.dat"
-FEATHER_AMOUNT = 17
-COLOUR_CORRECT_BLUR_FRAC = 0.5
-KERNEL_FACTOR = 3
+FEATHER_AMOUNT = 19
+COLOUR_CORRECT_BLUR_FRAC = 0.6
+KERNEL_FACTOR = 1
 
 FACE_POINTS = list(range(17, 68))
 MOUTH_POINTS = list(range(48, 61))
