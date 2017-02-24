@@ -14,6 +14,7 @@ import core
 from core import vec_len
 
 folder = "../../MetArt"
+hashes = []
 
 weights = np.array([0.] + [0.] + [1.] * (core.features_count() - 2))
 
@@ -40,6 +41,7 @@ def load_hash(name):
     return res
 
 def find_closest(img):
+    global hashes
     my_hash = core.porn_to_vec(img)
 
     if (len(my_hash) == 0):
@@ -49,16 +51,15 @@ def find_closest(img):
     distance = -1.0
     res_hash = None
     ans = ""
-    for f in glob.glob(os.path.join(folder, "* (Custom).jpg.hash")):
-        h = load_hash(f)
+    for name, h in hashes:
         new_dist = find_distance(my_hash, h)
         if (distance < 0):
             distance = new_dist
-            ans = f
+            ans = name
             res_hash = h
         elif (distance > new_dist):
             distance = new_dist
-            ans = f
+            ans = name
             res_hash = h
     print(ans)
     print(my_hash)
@@ -68,3 +69,9 @@ def find_closest(img):
         print(vec_len(vec))
 
     return cv2.imread(ans[0:-5], cv2.IMREAD_COLOR)
+
+def init():
+    global hashes
+    for f in glob.glob(os.path.join(folder, "* (Custom).jpg.hash")):
+        h = load_hash(f)
+        hashes.append((f, h))

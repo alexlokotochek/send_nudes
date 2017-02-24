@@ -103,5 +103,5 @@ def fill_db(folder):
     print(time.time() - start)
 
 if (__name__ == '__main__'):
-    fill_db("../../MetArt")
+    fill_db("../../Zishy")
 
