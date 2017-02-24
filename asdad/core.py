@@ -26,7 +26,7 @@ predictor = dlib.shape_predictor(predictor_path)
 sess = tf.Session()
 my_head_pose_estimator = CnnHeadPoseEstimator(sess)
 #my_head_pose_estimator.load_yaw_variables("tensorflow/head_pose/yaw/cnn_cccdd_30k")
-my_head_pose_estimator.load_pitch_variables("./tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
+my_head_pose_estimator.load_pitch_variables("send_nudes/asdad/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
 
 def get_landmarks(img):
     rects, score, idx = detector.run(img, 1, 1)

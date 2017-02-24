@@ -10,9 +10,8 @@ from skimage import draw
 from skimage import io
 import numpy as np
 import time
-import core
-from core import vec_len
-
+import send_nudes.asdad.core as core
+from send_nudes.asdad.core import vec_len
 
 folder = "/home/ubuntu/Zishy"
 

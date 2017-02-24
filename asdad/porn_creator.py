@@ -8,7 +8,7 @@ import cv2
 import dlib
 import numpy
 import sys
-import api
+import send_nudes.asdad.api as api
 
 """
 params
@@ -192,6 +192,3 @@ def get_porn(im1, im2):
 
 def process_image(img):
     return get_porn(api.find_closest(img), img)
-
-if (__name__ == '__main__'):
-    cv2.imwrite('res.jpg', process_image(cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)))
