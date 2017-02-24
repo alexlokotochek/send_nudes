@@ -14,13 +14,13 @@ import core
 from core import vec_len
 
 
-folder = "../../Zishy"
+folder = "/home/ubuntu/Zishy"
 
 
 hashes = []
 
 
-weights = np.array([0.] + [0.] + [1.] * (core.features_count() - 2))
+weights = np.array([0.] + [0.] + [2.] + [3.] + [1.] * (core.features_count() - 4))
 
 def find_distance(h1, h2):
     global weights

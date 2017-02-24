@@ -21,8 +21,8 @@ im format: np.ndarray with shape width, height, RGB
 
 PREDICTOR_PATH = "./shape_predictor_68_face_landmarks.dat"
 FEATHER_AMOUNT = 17
-COLOUR_CORRECT_BLUR_FRAC = 0.6
-KERNEL_FACTOR = 2
+COLOUR_CORRECT_BLUR_FRAC = 0.5
+KERNEL_FACTOR = 3
 
 FACE_POINTS = list(range(17, 68))
 MOUTH_POINTS = list(range(48, 61))
@@ -44,8 +44,8 @@ OVERLAY_POINTS = [
     LEFT_EYE_POINTS,
     RIGHT_EYE_POINTS, 
     NOSE_POINTS, 
-    MOUTH_POINTS,
-    [24, 19, 68] 
+    MOUTH_POINTS#,
+    #[24, 19, 68] 
 ]
 
 detector = dlib.get_frontal_face_detector()
@@ -193,8 +193,5 @@ def get_porn(im1, im2):
 def process_image(img):
     return get_porn(api.find_closest(img), img)
 
-if (__name__ != '__main__'):
-    exit(0)
-
-api.init()
-cv2.imwrite('res.jpg', process_image(cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)))
+if (__name__ == '__main__'):
+    cv2.imwrite('res.jpg', process_image(cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)))
