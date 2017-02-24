@@ -15,7 +15,7 @@ from core import vec_len
 
 folder = "../../Zishy"
 
-weights = np.array([0.] + [0.] + [1.] * (core.features_count() - 2))
+weights = np.array([0.] + [0.] + [3.] + [2.] + [1.] * (core.features_count() - 5))
 
 def find_distance(h1, h2):
     global weights
