@@ -4,6 +4,10 @@ import requests
 import time
 import telebot
 import uuid
+import cv2
+from telebot import types
+import send_nudes.asdad.api as api
+import send_nudes.asdad.porn_creator as porn_creator
 
 TOKEN = '246763002:AAHfGctwhdHPExiyRz39FhVHTLj5kqM2QkQ'
 bot = telebot.TeleBot(TOKEN)
@@ -18,7 +22,7 @@ def send_image(path, chat_id):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    send_image('/home/www/flask_project/static/images/8bf122b7-6fc8-4e11-ac78-07d95d13c4d1.jpg', message.chat.id)
+    pass
 
 
 @bot.message_handler(content_types=['photo'])
@@ -29,7 +33,17 @@ def handle_photo(message):
     print(src)
     with open(src, 'wb') as new_file:
         new_file.write(downloaded_file)
-    send_image('/home/www/flask_project/static/images/f33edae9-3c95-455e-990d-e65d1199ce7e.jpg', message.chat.id)
+    image = cv2.imread(src, cv2.IMREAD_COLOR)
+    res = porn_creator.process_image(image)
+    new_pk = uuid.uuid4()
+    new_uri = '/home/www/flask_project/static/images/{}.jpg'.format(new_pk)
+    cv2.imwrite(new_uri, res)
+    send_image(new_uri, message.chat.id)
+    markup = types.ReplyKeyboardMarkup()
+    markup.row('yes')
+    markup.row('no')
+    bot.send_message(message.chat.id, "Did you like it?", reply_markup=markup)
+
 
 @bot.message_handler(content_types=['document'])
 def handle_doc(message):
@@ -37,4 +51,5 @@ def handle_doc(message):
 
 
 if __name__ == '__main__':
+    api.init()
     bot.polling(none_stop=True)
