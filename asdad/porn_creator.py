@@ -190,10 +190,5 @@ def get_porn(im1, im2):
     return output_im
     # cv2.imwrite('output.jpg', output_im)
 
-if (__name__ != '__main__'):
-    exit(0)
-
-im = cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)
-res = get_porn(api.find_closest(im), im)
-
-cv2.imwrite('res.jpg', res)
+def process_image(img):
+	return get_porn(api.find_closest(img), img)
