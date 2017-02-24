@@ -76,8 +76,8 @@ def porn_to_vec(img):
         return []
     normalized = get_normalized_face(landmarks)
     res = np.append(np.array([pitch[0][0][0], 0.0]), normalized)
-    res = np.append(np.array([idx, 0.0]), res)
-    res = np.append(np.array([score, 0.0]), res)
+    res = np.append(np.array([idx[0], 0.0]), res)
+    res = np.append(np.array([score[0], 0.0]), res)
     return res.reshape(features_count(), 2)
 
 def hash_to_string(h):

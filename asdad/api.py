@@ -10,18 +10,18 @@ from skimage import draw
 from skimage import io
 import numpy as np
 import time
-import pidor
-from pidor import vec_len
+import core
+from core import vec_len
 
 folder = "../../MetArt"
 
-weights = np.array([100.] + [2.] + [1.]*12)
+weights = np.array([0.] + [0.] + [1.] * (core.features_count() - 2))
 
 def find_distance(h1, h2):
     global weights
     res = np.array([vec_len(a) for a in (h1 - h2)]) * weights
     if (h1[1][0] ** 2 < 1e-6):
-        res[1] = np.array([0, 0])
+        res[1] = 0
     return np.dot(res, res)
 
 def load_hash(name):
@@ -30,20 +30,17 @@ def load_hash(name):
         for i, line in enumerate(f):
             if len(line) == 0:
                 continue
-            if i >= 2:
+            try:
                 x, y = line.split(' ')
                 x, y = float(x), float(y)
-            else:
-                x = float(line)
-                y = 0.
-            vec.append(np.array([x, y]))
-    eblo_schjat = vec_len(vec[-1]) / vec_len(vec[3] - vec[-3])
-    vec = np.append(np.array([eblo_schjat, 0]), vec)
-    res = np.array(vec).reshape(14, 2)
+                vec.append(np.array([x, y]))
+            except:
+                print(f)
+    res = np.array(vec).reshape(core.features_count(), 2)
     return res
 
 def find_closest(img):
-    my_hash = pidor.porn_to_vec(img)
+    my_hash = core.porn_to_vec(img)
 
     if (len(my_hash) == 0):
         print("Fuck")
