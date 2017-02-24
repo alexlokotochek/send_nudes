@@ -13,7 +13,7 @@ import time
 import core
 from core import vec_len
 
-folder = "../../MetArt"
+folder = "../../Zishy"
 
 weights = np.array([0.] + [0.] + [1.] * (core.features_count() - 2))
 

@@ -21,7 +21,7 @@ im format: np.ndarray with shape width, height, RGB
 
 PREDICTOR_PATH = "./shape_predictor_68_face_landmarks.dat"
 FEATHER_AMOUNT = 17
-COLOUR_CORRECT_BLUR_FRAC = 0.8
+COLOUR_CORRECT_BLUR_FRAC = 0.6
 KERNEL_FACTOR = 2
 
 FACE_POINTS = list(range(17, 68))
