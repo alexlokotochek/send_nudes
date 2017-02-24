@@ -18,7 +18,7 @@ folder = "/home/ubuntu/Zishy"
 
 hashes = []
 
-weights = np.array([0.] + [0.] + [1.] + [1.] + [1.] * (core.features_count() - 4))
+weights = np.array([0.] + [0.] + [1.3] + [1.5] + [1.] + [1.1] + [1.2] + [1.] + [1.2] + [1.3] + [1.5] + [1.3] + [1.2] + [1.] + [1.2] + [1.1] + [1.])
 
 def find_distance(h1, h2):
     global weights
