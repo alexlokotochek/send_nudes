@@ -75,8 +75,6 @@ def find_closest(img):
     print(ans)
     print(my_hash)
     print(res_hash)
-    # Debug
-    for vec in res_hash - my_hash:
-        print(vec)
+    print(distance)
 
     return cv2.imread(ans[0:-5], cv2.IMREAD_COLOR)

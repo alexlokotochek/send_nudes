@@ -21,9 +21,8 @@ def features_count():
     # eblo_type
     # pitch
     # yaw
-    # eblo_square
-    # chin_points (13)
-    return 18
+    # landmarks (68)
+    return 72
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
@@ -40,7 +39,7 @@ def get_vector(img):
         return []
 
     rect = rects[0]
-
+    # https://matthewearl.github.io/2015/07/28/switching-eds-with-python/
     landmarks = np.array([[p.x, p.y] for p in predictor(img, rect).parts()])
  
     # Use tensorflow to get yaw and pitch
@@ -53,20 +52,23 @@ def get_vector(img):
     except:
         print("Tensor flow fucked up")
         return []
-    
-    # we only need chin
-    chin = landmarks[2:15, :]
-    chin -= chin[0]
-    basis = np.matrix([chin[12], [-chin[12][1], chin[12][0]]])
+    landmarks -= landmarks[30]
+    basis = np.matrix([landmarks[8], landmarks[2]])
     transform = np.linalg.inv(basis)
-    chin = chin.astype(float)
-    for i in range(1, len(chin)):
-        chin[i] = np.dot(transform, chin[i])
+    for i in range(0, len(landmarks)):
+        landmarks[i] = np.dot(transform, landmarks[i])
+    #chin = landmarks[2:15, :]
+    #chin -= chin[0]
+    #basis = np.matrix([chin[12], [-chin[12][1], chin[12][0]]])
+    #transform = np.linalg.inv(basis)
+    #chin = chin.astype(float)
+    #for i in range(1, len(chin)):
+    #    chin[i] = np.dot(transform, chin[i])
     
-    eblo_square_ratio = vec_len(chin[0] - chin[-1]) / vec_len(chin[2] - chin[-3])
+    #eblo_square_ratio = vec_len(chin[0] - chin[-1]) / vec_len(chin[2] - chin[-3])
     
-    features = np.array([score[0], 0, idx[0], 0, pitch, 0, yaw, 0, eblo_square_ratio, 0])
-    res = np.append(features, chin)
+    features = np.array([score[0], 0, idx[0], 0, pitch, 0, yaw, 0])
+    res = np.append(features, landmarks)
     
     return res.reshape(features_count(), 2)
 
