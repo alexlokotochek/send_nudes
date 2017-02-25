@@ -8,21 +8,18 @@ import cv2
 import dlib
 import numpy
 import sys
-import api
+#import api
 
 """
 params
 usage: 
     im1 = io.imread('./ava.jpg')
     im2 = io.imread('./porn.jpg')
-    res = get_porn(im1, im2)
+    res, status = get_porn(im1, im2)
 im format: np.ndarray with shape width, height, RGB
 """
 
-PREDICTOR_PATH = "./shape_predictor_68_face_landmarks.dat"
-FEATHER_AMOUNT = 17
-COLOUR_CORRECT_BLUR_FRAC = 0.6
-KERNEL_FACTOR = 2
+PREDICTOR_PATH = "./asdad/shape_predictor_68_face_landmarks.dat"
 
 FACE_POINTS = list(range(17, 68))
 MOUTH_POINTS = list(range(48, 61))
@@ -40,13 +37,6 @@ ALIGN_POINTS = (LEFT_BROW_POINTS +
                 NOSE_POINTS + 
                 MOUTH_POINTS)
 
-OVERLAY_POINTS = [
-    LEFT_EYE_POINTS,
-    RIGHT_EYE_POINTS, 
-    NOSE_POINTS, 
-    MOUTH_POINTS,
-    [24, 19, 68] 
-]
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
@@ -67,9 +57,9 @@ def draw_convex_hull(im, points, color):
     cv2.fillConvexPoly(im, points, color=color)
 
 
-def get_face_mask(im, landmarks):
+def get_face_mask(im, landmarks, FEATHER_AMOUNT):
     im = numpy.zeros(im.shape[:2], dtype=numpy.float64)
-    for i, group in enumerate(OVERLAY_POINTS):
+    for i, group in enumerate(list(OVERLAY_POINTS)):
         this_landmarks = landmarks[group]
         # this_landmarks = 2*this_landmarks + this_landmarks[:, ::-1]
         draw_convex_hull(im,
@@ -135,7 +125,7 @@ def warp_im(im, M, dshape):
     return output_im
 
 
-def correct_colours(im1, im2, landmarks1):
+def correct_colours(im1, im2, landmarks1, COLOUR_CORRECT_BLUR_FRAC):
     blur_amount = COLOUR_CORRECT_BLUR_FRAC * numpy.linalg.norm(
                               numpy.mean(landmarks1[LEFT_EYE_POINTS], axis=0) -
                               numpy.mean(landmarks1[RIGHT_EYE_POINTS], axis=0))
@@ -151,7 +141,9 @@ def correct_colours(im1, im2, landmarks1):
 
 def add_forehead_point(landmarks):
     corner_points = [24, 19, 27] # 27 is upper nose point
-    corner_points = -landmarks[:,0][corner_points], -landmarks[:,1][corner_points]
+    corner_point_a = -landmarks[:,0][corner_points]
+    corner_point_b = -landmarks[:,1][corner_points]
+    corner_points = [corner_point_a, corner_point_b]
     pt0 = np.array([int(corner_points[0][0]), int(corner_points[1][0])])
     pt1 = np.array([int(corner_points[0][1]), int(corner_points[1][1])])
     pt = np.array([int(corner_points[0][2]), int(corner_points[1][2])])
@@ -161,39 +153,89 @@ def add_forehead_point(landmarks):
     pt_norm = pt - line_pt - pt_proj
     pt_sym = pt - 2*pt_norm
     mid = (pt0 + pt1)/2.
-    pt_sym += (-pt + mid)*0.2
+    pt_sym = pt_sym.astype(np.float64)
+    pt_sym += (-pt.astype(np.float64) + mid.astype(np.float64))*0.2
     return np.vstack([landmarks ,[-pt_sym[0], -pt_sym[1]]])
 
-def get_porn(im1, im2):
-    landmarks1 = read_im_and_landmarks(im1)
-    landmarks1 = add_forehead_point(landmarks1).astype(int)
+def get_porn(im1, # TELKA V KOTORUU EBOSHIM
+             im2, # EBLO KOTOROE EBOSHIM 
+             params =
+                {
+                # include forehead triangle transplantation
+                # caution about fucking hairstyles
+                'USE_FOREHEAD': True,
+                # include brows transplantation
+                'USE_BROWS': False,
+                # if 0, output shakalization processis not applied
+                # otherwise it's result img height
+                # width will be adjusted proportionally
+                'SHAKALIZE_HEIGHT': 0,
+                # feather on the places where we cut off the eblo
+                'FEATHER_AMOUNT': 17,
+                # thing like colour transparency 
+                # 1.0 to turn off transparency and colour adjustment
+                'COLOUR_CORRECT_BLUR_FRAC': 0.6,
+                # input face image will be less sharp
+                # 1 to turn off
+                'EBLO_KERNEL_FACTOR': 2,
+                # the same thing bout body
+                'TELKA_KERNEL_FACTOR': 2
+                }
+            ):
 
-    kernel = np.ones((KERNEL_FACTOR, KERNEL_FACTOR),np.float32)/(KERNEL_FACTOR**2)
+    global OVERLAY_POINTS
+    OVERLAY_POINTS = [
+        LEFT_EYE_POINTS,
+        RIGHT_EYE_POINTS, 
+        NOSE_POINTS, 
+        MOUTH_POINTS
+    ]
+
+    if params['USE_FOREHEAD']:
+        OVERLAY_POINTS.append([24, 19, 68])
+    if params['USE_BROWS']:
+        OVERLAY_POINTS.append(RIGHT_BROW_POINTS)
+        OVERLAY_POINTS.append(LEFT_BROW_POINTS)
+
+    landmarks1 = read_im_and_landmarks(im1)
+    if len(landmarks1) != 68:
+        return None, 'face not found or more than one on the body pic'
+    landmarks1 = add_forehead_point(landmarks1).astype(int)
+    
+    kernel = np.ones((params['TELKA_KERNEL_FACTOR'], params['TELKA_KERNEL_FACTOR']),np.float32)/(params['TELKA_KERNEL_FACTOR']**2)
     im1 = cv2.filter2D(im1, -1, kernel)
 
+    kernel = np.ones((params['EBLO_KERNEL_FACTOR'], params['EBLO_KERNEL_FACTOR']),np.float32)/(params['EBLO_KERNEL_FACTOR']**2)
+    im2 = cv2.filter2D(im2, -1, kernel)
+
     landmarks2 = read_im_and_landmarks(im2)
+    if len(landmarks2) != 68:
+        return None, 'face not found or more than one on the face pic'
     landmarks2 = add_forehead_point(landmarks2).astype(int)
 
     M = transformation_from_points(landmarks1[ALIGN_POINTS],
                                    landmarks2[ALIGN_POINTS])
 
-    mask = get_face_mask(im2, landmarks2)
+    mask = get_face_mask(im2, landmarks2, params['FEATHER_AMOUNT'])
     warped_mask = warp_im(mask, M, im1.shape)
-    combined_mask = numpy.max([get_face_mask(im1, landmarks1), warped_mask],
+    combined_mask = numpy.max([get_face_mask(im1, landmarks1, params['FEATHER_AMOUNT']), warped_mask],
                               axis=0)
 
     warped_im2 = warp_im(im2, M, im1.shape)
-    warped_corrected_im2 = correct_colours(im1, warped_im2, landmarks1)
+    warped_corrected_im2 = correct_colours(im1, warped_im2, landmarks1, params['COLOUR_CORRECT_BLUR_FRAC'])
 
     output_im = im1 * (1.0 - combined_mask) + warped_corrected_im2 * combined_mask
-    #output_im = resize_im(output_im)
-    return output_im
+    if params['SHAKALIZE_HEIGHT'] > 0:
+        output_im = resize_im(output_im, params['SHAKALIZE_HEIGHT'])
+    return output_im, 'OK'
     # cv2.imwrite('output.jpg', output_im)
 
-if (__name__ != '__main__'):
-    exit(0)
 
-im = cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)
-res = get_porn(api.find_closest(im), im)
 
-cv2.imwrite('res.jpg', res)
+#if (__name__ != '__main__'):
+#    exit(0)
+
+#im = cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)
+#res = get_porn(api.find_closest(im), im)
+
+#cv2.imwrite('res.jpg', res)
