@@ -95,4 +95,3 @@ def fill_db(folder):
 
 if (__name__ == '__main__'):
     fill_db("../../dataset")
-
