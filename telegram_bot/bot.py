@@ -6,8 +6,8 @@ import telebot
 import uuid
 import cv2
 from telebot import types
-import send_nudes.asdad.api as api
-import send_nudes.asdad.porn_creator as porn_creator
+import face_to_vec.api as api
+import face_to_vec.porn_creator as porn_creator
 
 TOKEN = '246763002:AAHfGctwhdHPExiyRz39FhVHTLj5kqM2QkQ'
 bot = telebot.TeleBot(TOKEN)
