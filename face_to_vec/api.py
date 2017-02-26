@@ -65,7 +65,7 @@ def find_closest(img):
     distance = -1.0
     res_hash = None
     ans = ""
-    for name, h in this.hashes:
+    for name, h in hashes:
         new_dist = find_distance(my_hash, h)
         if (distance < 0):
             distance = new_dist
