@@ -10,6 +10,8 @@ import numpy
 import sys
 import api
 
+api.init()
+
 """
 params
 usage: 
@@ -194,7 +196,6 @@ def process_image(im):
     return get_porn(api.find_closest(im), im)
 
 if (__name__ == '__main__'):
-    api.init()
     im = cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)
     res = get_porn(api.find_closest(im), im)
     cv2.imwrite('res.jpg', res)

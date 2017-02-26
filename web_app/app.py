@@ -5,13 +5,10 @@ import uuid
 import subprocess
 import cv2
 from flask import Flask, jsonify, redirect, request
-import face_to_vec.api as api
 import face_to_vec.porn_creator as porn_creator
 
 WEB_APP_DIR = os.path.dirname(__file__)
 app = Flask(__name__)
-api.init()
-
 
 @app.route('/')
 def index():
