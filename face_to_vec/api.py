@@ -13,7 +13,7 @@ import time
 import core
 from core import vec_len
 
-folder = "../../dataset"
+folder = "../dataset"
 
 # confidence
 # eblo_type
@@ -21,12 +21,12 @@ folder = "../../dataset"
 # yaw
 # eblo_square
 # chin_points (13)
-weights = np.array([0.] + [0.] + [1.] + [1.] + [1.] * (core.features_count() - 4))
+weights = np.array([0.] + [0.] + [0.05] + [0.05] + [7.] * 15 + [1.] * (core.features_count() - 19))
 hashes = []
 
 def find_distance(h1, h2):
     global weights
-    res = np.array([vec_len(a) for a in (h1 - h2)]) * weights
+    res = np.array([vec_len(a) ** 2 for a in (h1 - h2)]) * weights
     if (h1[1][0] ** 2 < 1e-6):
         res[1] = 0
     return np.dot(res, res)
@@ -51,7 +51,8 @@ def init():
     for f in glob.glob(os.path.join(folder, "* (Custom).jpg.hash")):
         h = load_hash(f)
         hashes.append((f, h))
-
+    print("Hashes loaded:", len(hashes))
+    
 def find_closest(img):
     global hashes
     my_hash = core.get_vector(img)

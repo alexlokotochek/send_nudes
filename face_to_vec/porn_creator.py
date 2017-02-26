@@ -45,7 +45,7 @@ OVERLAY_POINTS = [
     RIGHT_EYE_POINTS, 
     NOSE_POINTS, 
     MOUTH_POINTS,
-    [24, 19, 68] 
+    #[24, 19, 68] 
 ]
 
 detector = dlib.get_frontal_face_detector()
