@@ -24,13 +24,12 @@ def features_count():
     # landmarks (68)
     return 72
 
-MODELS_DIR = os.path.dirname(__file__)
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor(os.path.join(MODELS_DIR, "shape_predictor_68_face_landmarks.dat"))
+predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
 sess = tf.Session()
 rotation_estimator = CnnHeadPoseEstimator(sess)
-rotation_estimator.load_yaw_variables(os.path.join(MODELS_DIR, "tensorflow/head_pose/yaw/cnn_cccdd_30k"))
-rotation_estimator.load_pitch_variables(os.path.join(MODELS_DIR, "tensorflow/head_pose/pitch/cnn_cccdd_30k.tf"))
+rotation_estimator.load_yaw_variables("./tensorflow/head_pose/yaw/cnn_cccdd_30k")
+rotation_estimator.load_pitch_variables("./tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
 
 def get_vector(img):
     rects, score, idx = detector.run(img, 1, 1)
@@ -53,6 +52,7 @@ def get_vector(img):
     except:
         print("Tensor flow fucked up")
         return []
+    landmarks = landmarks.astype(float)
     landmarks -= landmarks[30]
     basis = np.matrix([landmarks[8], landmarks[2]])
     transform = np.linalg.inv(basis)
@@ -94,5 +94,4 @@ def fill_db(folder):
         output.close()
 
 if (__name__ == '__main__'):
-    fill_db("../dataset")
-
+    fill_db("../../dataset")
