@@ -13,7 +13,7 @@ import time
 import core
 from core import vec_len
 
-folder = "../dataset"
+folder = "/home/alaktionov/dataset"
 
 # confidence
 # eblo_type
@@ -64,14 +64,12 @@ def find_closest(img):
     ans = ""
     for name, h in hashes:
         new_dist = find_distance(my_hash, h)
-        if (distance < 0):
+        if distance < 0 or distance > new_dist:
             distance = new_dist
             ans = name
             res_hash = h
-        elif (distance > new_dist):
-            distance = new_dist
-            ans = name
-            res_hash = h
+    if ans == '':
+        raise Exception('No images found')
     print(ans)
     print(my_hash)
     print(res_hash)
