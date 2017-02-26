@@ -52,6 +52,7 @@ def get_vector(img):
     except:
         print("Tensor flow fucked up")
         return []
+    landmarks = landmarks.astype(float)
     landmarks -= landmarks[30]
     basis = np.matrix([landmarks[8], landmarks[2]])
     transform = np.linalg.inv(basis)
@@ -93,5 +94,5 @@ def fill_db(folder):
         output.close()
 
 if (__name__ == '__main__'):
-    fill_db("../dataset")
+    fill_db("../../dataset")
 
