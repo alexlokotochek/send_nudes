@@ -196,5 +196,5 @@ def process_image(im):
 if (__name__ == '__main__'):
     api.init()
     im = cv2.imread('./ava.jpg', cv2.IMREAD_COLOR)
-    res, status = get_porn(api.find_closest(im), im)
+    res = get_porn(api.find_closest(im), im)
     cv2.imwrite('res.jpg', res)
