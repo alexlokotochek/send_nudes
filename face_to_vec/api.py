@@ -13,7 +13,7 @@ import time
 import core
 from core import vec_len
 
-folder = "home/alaktionov/dataset"
+folder = "/home/alaktionov/dataset"
 
 # confidence
 # eblo_type
