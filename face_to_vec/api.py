@@ -22,10 +22,8 @@ folder = "/home/alaktionov/dataset"
 # eblo_square
 # chin_points (13)
 
-this = sys.modules[__name__]
-
-this.weights = np.array([0.] + [0.] + [0.05] + [0.05] + [7.] * 15 + [1.] * (core.features_count() - 19))
-this.hashes = []
+weights = np.array([0.] + [0.] + [0.05] + [0.05] + [7.] * 15 + [1.] * (core.features_count() - 19))
+hashes = []
 
 def find_distance(h1, h2):
     global weights
@@ -50,12 +48,15 @@ def load_hash(name):
     return res
     
 def init():
+    global hashes
     for f in glob.glob(os.path.join(folder, "* (Custom).jpg.hash")):
         h = load_hash(f)
-        this.hashes.append((f, h))
+        hashes.append((f, h))
     print("Hashes loaded:", len(hashes))
     
 def find_closest(img):
+    global hashes
+    print("Current hashes size", len(hashes))
     my_hash = core.get_vector(img)
     if (len(my_hash) == 0):
         print("Fuck")
