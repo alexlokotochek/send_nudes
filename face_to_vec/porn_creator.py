@@ -1,3 +1,4 @@
+import os
 import PIL.Image
 from io import StringIO
 from matplotlib import pyplot as plt
@@ -19,7 +20,7 @@ usage:
 im format: np.ndarray with shape width, height, RGB
 """
 
-PREDICTOR_PATH = "./shape_predictor_68_face_landmarks.dat"
+PREDICTOR_PATH = os.path.join(os.path.dirname(__file__), "shape_predictor_68_face_landmarks.dat")
 FEATHER_AMOUNT = 17
 COLOUR_CORRECT_BLUR_FRAC = 0.6
 KERNEL_FACTOR = 2
