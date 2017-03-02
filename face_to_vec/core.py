@@ -36,8 +36,7 @@ def get_vector(img):
     rects, score, idx = detector.run(img, 1, 1)
 
     if len(rects) == 0:
-        print("Fuck, no faces")
-        return []
+        raise Exception("Fuck, no faces")
 
     rect = rects[0]
     # https://matthewearl.github.io/2015/07/28/switching-eds-with-python/
@@ -51,8 +50,7 @@ def get_vector(img):
         pitch = rotation_estimator.return_pitch(img)
         yaw = rotation_estimator.return_yaw(img)
     except:
-        print("Tensor flow fucked up")
-        return []
+        raise Exception("Tensor flow fucked up")
     landmarks = landmarks.astype(float)
     landmarks -= landmarks[30]
     basis = np.matrix([landmarks[8], landmarks[2]])

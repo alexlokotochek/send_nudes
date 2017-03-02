@@ -64,17 +64,15 @@ def find_closest(img):
 
     distance = -1.0
     res_hash = None
-    ans = ""
+    ans = None
     for name, h in hashes:
         new_dist = find_distance(my_hash, h)
-        if (distance < 0):
+        if distance < 0 or distance > new_dist:
             distance = new_dist
             ans = name
             res_hash = h
-        elif (distance > new_dist):
-            distance = new_dist
-            ans = name
-            res_hash = h
+    if ans is None:
+        raise Exception('No suitable images found')
     print(ans)
     print(my_hash)
     print(res_hash)
