@@ -45,7 +45,10 @@ def get_vector(img):
     # Use tensorflow to get yaw and pitch
     expand = 20
     sz = max(rect.right() - rect.left(), rect.bottom() - rect.top(), 64)
-    img = img[rect.left() - expand:rect.left() + sz + expand, rect.top() - expand:rect.top() + sz + expand]
+    img = img[rect.top() - expand:rect.top() + sz + expand,  rect.left() - expand:rect.left() + sz + expand]
+    if img.shape[0] < 64 or img.shape[1] < 64:
+        raise Exception('Couldn\'t cut image')
+    cv2.imwrite('static/images/res.jpg', img)
     try:
         pitch = rotation_estimator.return_pitch(img)
         yaw = rotation_estimator.return_yaw(img)
