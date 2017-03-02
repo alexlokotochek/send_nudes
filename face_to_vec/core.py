@@ -24,19 +24,19 @@ def features_count():
     # landmarks (68)
     return 72
 
+MODELS_DIR = os.path.dirname(__file__)
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor(os.path.join(MODELS_DIR, "shape_predictor_68_face_landmarks.dat"))
 sess = tf.Session()
 rotation_estimator = CnnHeadPoseEstimator(sess)
-rotation_estimator.load_yaw_variables("./tensorflow/head_pose/yaw/cnn_cccdd_30k")
-rotation_estimator.load_pitch_variables("./tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
+rotation_estimator.load_yaw_variables(os.path.join(MODELS_DIR, "tensorflow/head_pose/yaw/cnn_cccdd_30k"))
+rotation_estimator.load_pitch_variables(os.path.join(MODELS_DIR, "tensorflow/head_pose/pitch/cnn_cccdd_30k.tf"))
 
 def get_vector(img):
     rects, score, idx = detector.run(img, 1, 1)
 
     if len(rects) == 0:
-        print("Fuck, no faces")
-        return []
+        raise Exception("Fuck, no faces")
 
     rect = rects[0]
     # https://matthewearl.github.io/2015/07/28/switching-eds-with-python/
@@ -45,13 +45,16 @@ def get_vector(img):
     # Use tensorflow to get yaw and pitch
     expand = 20
     sz = max(rect.right() - rect.left(), rect.bottom() - rect.top(), 64)
-    img = img[rect.left() - expand:rect.left() + sz + expand, rect.top() - expand:rect.top() + sz + expand]
+    img = img[rect.top() - expand:rect.top() + sz + expand,  rect.left() - expand:rect.left() + sz + expand]
+    if img.shape[0] < 64 or img.shape[1] < 64:
+        raise Exception('Couldn\'t cut image')
+    cv2.imwrite('static/images/res.jpg', img)
     try:
         pitch = rotation_estimator.return_pitch(img)
         yaw = rotation_estimator.return_yaw(img)
     except:
-        print("Tensor flow fucked up")
-        return []
+        raise Exception("Tensor flow fucked up")
+    landmarks = landmarks.astype(float)
     landmarks -= landmarks[30]
     basis = np.matrix([landmarks[8], landmarks[2]])
     transform = np.linalg.inv(basis)
@@ -93,5 +96,4 @@ def fill_db(folder):
         output.close()
 
 if (__name__ == '__main__'):
-    fill_db("../dataset")
-
+    fill_db("../../dataset")
